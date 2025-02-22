@@ -2,8 +2,6 @@ import pygame as pg
 import sys
 import math
 
-import random
-
 from construction import *
 
 # Screen Settings
@@ -98,6 +96,7 @@ class Renderer:
     def control(self):
         keys = pg.key.get_pressed()
         
+        # Rotation Controls
         if keys[pg.K_s]:
             self.rotations[0] = SPEED
             self.rotation_tracker[0] += SPEED
@@ -148,12 +147,14 @@ class Renderer:
         projected = []
 
         for i in range(len(self.points)):
-            try:
+            if self.points[i][2] > -self.fov:
                 proj_x = (self.points[i][0] * self.fov) / (self.points[i][2] + self.fov) + (S_WIDTH / 2)
                 proj_y = (self.points[i][1] * self.fov) / (self.points[i][2] + self.fov) + (S_HEIGHT / 2)
-            except ZeroDivisionError:
-                proj_x = (self.points[i][0] * self.fov) / (self.points[i][2] + self.fov + 0.01) + (S_WIDTH / 2)
-                proj_y = (self.points[i][1] * self.fov) / (self.points[i][2] + self.fov + 0.01) + (S_HEIGHT / 2)
+            else:
+                # Project points normally even if they are behind the camera
+                proj_x = (self.points[i][0] * self.fov) / 0.01 + (S_WIDTH / 2)
+                proj_y = (self.points[i][1] * self.fov) / 0.01 + (S_HEIGHT / 2)
+
             projected.append((proj_x, proj_y))
 
         return projected
@@ -161,12 +162,13 @@ class Renderer:
     # Draws lines between specified points
     def draw_lines(self, points):
         for i in range(len(self.points)):
-            pg.draw.circle(win, 'white', points[i], 5)
+            if 0 <= points[i][0] <= S_WIDTH and 0 <= points[i][1] <= S_HEIGHT:
+                pg.draw.circle(win, 'white', points[i], 5)
         for i in self.lines:
             pg.draw.line(win, 'white', points[i[0]], points[i[1]])
 
 # Main Variables/Objects
-obj = Box(0, 0, 0, 200, 200, 200)
+obj = Box(0, 0, 0, 500, 500, 500)
 obj.construct()
 renderer = Renderer(obj.shape, x_rot, y_rot, z_rot, FOV)
 
