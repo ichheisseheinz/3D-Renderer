@@ -85,7 +85,7 @@ class Cone(Shape):
         for i in range(self.resolution):
             theta = ((2 * math.pi) / self.resolution) * i
             self.shape[1].append([(self.radius * -math.sin(theta)) + self.shape[0][0], self.height/2 + self.shape[0][1], (self.radius * math.cos(theta)) + self.shape[0][2]])
-        self.shape[1].append([0, -self.height/2, 0])
+        self.shape[1].append([self.shape[0][0], -self.height/2 + self.shape[0][1], self.shape[0][2]])
         
         for i in range(self.resolution):
             if not i == self.resolution - 1:

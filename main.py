@@ -33,6 +33,7 @@ class Renderer:
         # Transformation properties
         self.rotations = [x_rot, y_rot, z_rot]
         self.fov = fov
+        self.zoom = 1
 
         # UI properties
         self.font = pg.font.SysFont('airal', 25)
@@ -45,8 +46,12 @@ class Renderer:
         text2 = self.font.render(f'Object Rotation: (x: {round(self.rotation_tracker[0], 3)}, y: {round(self.rotation_tracker[1], 3)}, z: {round(self.rotation_tracker[2], 3)})', True, 'white')
         text2_rect = text2.get_rect()
 
+        text3 = self.font.render(f'Viewport zoom: {round(self.zoom, 2)}', True, 'white')
+        text3_rect = text3.get_rect()
+
         win.blit(text1, (5, 5), text1_rect)
         win.blit(text2, (5, 30), text2_rect)
+        win.blit(text3, (5, 55), text2_rect)
     
     """
     Applies the matrix
@@ -139,6 +144,11 @@ class Renderer:
             self.fov += 25
         if keys[pg.K_DOWN] and self.fov > 200:
             self.fov -= 25
+
+        if keys[pg.K_EQUALS]:
+            self.zoom += SPEED
+        if keys[pg.K_MINUS] and self.zoom > 0.1:
+            self.zoom -= SPEED
         
         self.draw_lines(self.create_projected_points())
     
@@ -148,14 +158,14 @@ class Renderer:
 
         for i in range(len(self.points)):
             if self.points[i][2] > -self.fov:
-                proj_x = (self.points[i][0] * self.fov) / (self.points[i][2] + self.fov) + (S_WIDTH / 2)
-                proj_y = (self.points[i][1] * self.fov) / (self.points[i][2] + self.fov) + (S_HEIGHT / 2)
+                proj_x = (self.points[i][0] * self.fov) / (self.points[i][2] + self.fov)
+                proj_y = (self.points[i][1] * self.fov) / (self.points[i][2] + self.fov)
             else:
                 # Project points normally even if they are behind the camera
-                proj_x = (self.points[i][0] * self.fov) / 0.01 + (S_WIDTH / 2)
-                proj_y = (self.points[i][1] * self.fov) / 0.01 + (S_HEIGHT / 2)
+                proj_x = (self.points[i][0] * self.fov) / 0.01
+                proj_y = (self.points[i][1] * self.fov) / 0.01
 
-            projected.append((proj_x, proj_y))
+            projected.append((proj_x * self.zoom + (S_WIDTH / 2), proj_y * self.zoom + (S_HEIGHT / 2)))
 
         return projected
     
@@ -163,14 +173,16 @@ class Renderer:
     def draw_lines(self, points):
         for i in range(len(self.points)):
             if 0 <= points[i][0] <= S_WIDTH and 0 <= points[i][1] <= S_HEIGHT:
-                pg.draw.circle(win, 'white', points[i], 5)
+                pg.draw.circle(win, 'white', points[i], 2)
         for i in self.lines:
-            pg.draw.line(win, 'white', points[i[0]], points[i[1]])
+            pg.draw.line(win, pg.Color(255, 255, 255, a=122), points[i[0]], points[i[1]])
 
-# Main Variables/Objects
-obj = Box(0, 0, 0, 500, 500, 500)
-obj.construct()
-renderer = Renderer(obj.shape, x_rot, y_rot, z_rot, FOV)
+# Object setup
+obj = [Cone(0, -250, 0, 100, 200, 10), Box(250, 0, 0, 200, 200, 200), Prism(-250, 0, 0, 100, 200, 10), Pyramid(0, 250, 0, 200, 200, 200)]
+renderer = []
+for i in obj:
+    i.construct()
+    renderer.append(Renderer(i.shape, x_rot, y_rot, z_rot, FOV))
 
 # Main loop
 while running:
@@ -182,8 +194,10 @@ while running:
     
     win.fill("black")
     
-    renderer.control()
-    renderer.render_ui()
+    for i in renderer:
+        i.control()
+
+    renderer[0].render_ui()
 
     pg.display.update()
 
