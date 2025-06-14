@@ -15,6 +15,7 @@ class Box(Shape):
         self.height = height
     
     def construct(self):
+        # Points
         self.shape[1].append([self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], self.width/2 + self.shape[0][2]])
         self.shape[1].append([self.length/2 + self.shape[0][0], -self.height/2 + self.shape[0][1], self.width/2 + self.shape[0][2]])
         self.shape[1].append([-self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], self.width/2 + self.shape[0][2]])
@@ -24,6 +25,7 @@ class Box(Shape):
         self.shape[1].append([-self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], -self.width/2 + self.shape[0][2]])
         self.shape[1].append([-self.length/2 + self.shape[0][0], -self.height/2 + self.shape[0][1], -self.width/2 + self.shape[0][2]])
 
+        # Lines
         self.shape.append([(0,1), (1,3), (3,2), (2,0), (0,4), (1,5), (3,7), (2,6), (4,5), (5,7), (7,6), (6,4)])
 
 class Pyramid(Shape):
@@ -34,12 +36,14 @@ class Pyramid(Shape):
         self.height = height
 
     def construct(self):
+        # Points
         self.shape[1].append([self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], self.width/2 + self.shape[0][2]])
         self.shape[1].append([self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], -self.width/2 + self.shape[0][2]])
         self.shape[1].append([-self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], self.width/2 + self.shape[0][2]])
         self.shape[1].append([-self.length/2 + self.shape[0][0], self.height/2 + self.shape[0][1], -self.width/2 + self.shape[0][2]])
         self.shape[1].append([self.shape[0][0], -self.height/2 + self.shape[0][1], self.shape[0][2]])
 
+        # Lines
         self.shape.append([(0,1), (1,3), (3,2), (2,0), (0,4), (1,4), (2,4), (3,4)])
 
 class Prism(Shape):
@@ -52,6 +56,7 @@ class Prism(Shape):
         self.shape.append([])
     
     def construct(self):
+        # Points
         for i in range(self.resolution):
             theta = ((2 * math.pi) / self.resolution) * i
             self.shape[1].append([(self.radius * -math.sin(theta)) + self.shape[0][0], self.height/2 + self.shape[0][1], (self.radius * math.cos(theta)) + self.shape[0][2]])
@@ -59,6 +64,7 @@ class Prism(Shape):
             theta = ((2 * math.pi) / self.resolution) * i
             self.shape[1].append([(self.radius * -math.sin(theta)) + self.shape[0][0], -self.height/2 + self.shape[0][1], (self.radius * math.cos(theta)) + self.shape[0][2]])
         
+        # Lines
         for i in range(self.resolution):
             if not i == self.resolution - 1:
                 self.shape[2].append((i, i+1))
@@ -82,11 +88,13 @@ class Cone(Shape):
         self.shape.append([])
     
     def construct(self):
+        # Points
         for i in range(self.resolution):
             theta = ((2 * math.pi) / self.resolution) * i
             self.shape[1].append([(self.radius * -math.sin(theta)) + self.shape[0][0], self.height/2 + self.shape[0][1], (self.radius * math.cos(theta)) + self.shape[0][2]])
         self.shape[1].append([self.shape[0][0], -self.height/2 + self.shape[0][1], self.shape[0][2]])
         
+        # Lines
         for i in range(self.resolution):
             if not i == self.resolution - 1:
                 self.shape[2].append((i, i+1))
