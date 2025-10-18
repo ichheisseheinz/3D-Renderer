@@ -1,6 +1,5 @@
 # Blender 4.5.3 LTS
 # www.blender.org
-mtllib pawn.mtl
 o pawn
 v 0.000000 -0.316885 0.000000
 v 0.130000 -0.316885 0.000000

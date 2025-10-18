@@ -2,7 +2,7 @@ import pygame as pg
 import sys
 import math
 
-from construction import *
+from objects.construction import *
 
 # Screen Settings
 FPS = 60
@@ -236,7 +236,7 @@ class Renderer:
             pg.draw.line(win, pg.Color(255, 255, 255, a=122), points[i[0]], points[i[1]])
 
 # Object setup
-obj : list[Shape] = [CustomOBJ(0, 0, 0, 'objects/pawn.obj', 400)]
+obj : list[Shape] = [CustomOBJ(0, 0, 0, 'objects/models/knight.obj', 400)]
 renderer : list[Renderer] = []
 for i in obj:
     i.construct()
