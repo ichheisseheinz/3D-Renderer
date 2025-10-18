@@ -9,7 +9,6 @@ FPS = 60
 S_WIDTH, S_HEIGHT = 1280, 720
 pg.init()
 win = pg.display.set_mode((S_WIDTH, S_HEIGHT))
-pg.display.set_caption("Basic 3d Rendering")
 running = True
 clock = pg.time.Clock()
 
@@ -41,9 +40,11 @@ class Renderer:
         # UI properties
         self.font = pg.font.SysFont('default', 25)
         self.rotation_tracker = [x_rot, y_rot, z_rot]
-        self.visible_verticies = True
-        self.wireframe = False
         self.menu = True
+
+        # Model visualization properties
+        self.visible_verticies = False
+        self.wireframe = False
 
         # Others
         self.alt_pressed = False
@@ -253,11 +254,21 @@ class Renderer:
             for i in self.lines:
                 pg.draw.line(win, pg.Color(255, 255, 255, a=122), points[i[0]], points[i[1]])
         else:
+            self.calc_face_depth()
+            self.faces = sorted(self.faces, key=lambda face: face.depth, reverse=True)
             for i in self.faces:
                 pg.draw.polygon(win, pg.Color(i.color), [points[x] for x in i.verts])
+    
+    def calc_face_depth(self):
+        for i in self.faces:
+            depth = 0
+            for j in i.verts:
+                depth += self.points[j][2]
+            
+            i.depth = depth / len(i.verts)
 
 # Object setup
-obj : list[Shape] = [CustomOBJ(0, 0, 0, 'objects/models/knight.obj', 400)]
+obj : list[Shape] = [CustomOBJ(0, 0, 0, 'objects/models/queen.obj', 400)]
 renderer : list[Renderer] = []
 for i in obj:
     i.construct()
@@ -265,7 +276,7 @@ for i in obj:
 
 # Main loop
 while running:
-    clock.tick(FPS)
+    true_fps = clock.tick(FPS)
 
     for event in pg.event.get():
         if event.type == pg.QUIT:
@@ -278,6 +289,7 @@ while running:
 
     renderer[0].render_ui()
 
+    pg.display.set_caption(f"Basic 3D Rendering (FPS: {true_fps})")
     pg.display.update()
 
 pg.quit()

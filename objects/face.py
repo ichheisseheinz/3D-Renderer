@@ -5,6 +5,7 @@ class Face:
         self.verts = verts
         self.normal = self.calc_norms(norms)
         self.color = self.calc_color()
+        self.depth = 0
     
     def calc_norms(self, norms) -> Vector3:
         current = Vector3(0, 0, 0)
