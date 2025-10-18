@@ -112,3 +112,4 @@ class CustomOBJ(Shape):
     def construct(self):
         self.shape[1] = self.loader.get_verts(self.scale)
         self.shape[2] = self.loader.get_lines()
+        self.shape[3] = self.loader.get_faces()

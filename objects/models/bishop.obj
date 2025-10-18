@@ -1,6 +1,5 @@
 # Blender 4.5.3 LTS
 # www.blender.org
-mtllib bishop.mtl
 o bishop
 v 0.001650 -0.533660 0.000000
 v 0.171650 -0.533660 0.000000

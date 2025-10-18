@@ -31,6 +31,7 @@ class Renderer:
         self.origin = shape[0]
         self.points = shape[1]
         self.lines = shape[2]
+        self.faces = shape[3]
 
         # Transformation properties
         self.rotations = [x_rot, y_rot, z_rot]
@@ -41,11 +42,13 @@ class Renderer:
         self.font = pg.font.SysFont('default', 25)
         self.rotation_tracker = [x_rot, y_rot, z_rot]
         self.visible_verticies = True
+        self.wireframe = False
         self.menu = True
 
         # Others
         self.alt_pressed = False
         self.m_pressed = False
+        self.r_pressed = False
 
     def render_ui(self):
         # FOV text
@@ -65,6 +68,10 @@ class Renderer:
         text4 = self.font.render(f'Vertex toggle (Change with ALT): {'ON' if self.visible_verticies else 'OFF'}', True, 'white')
         text4_rect = text4.get_rect()
 
+        # Wireframe toggle text
+        text5 = self.font.render(f'Wireframe toggle (Change with R): {'ON' if self.wireframe else 'OFF'}', True, 'white')
+        text5_rect = text5.get_rect()
+
         # Menu text
         menu_text = self.font.render('Press M to toggle properties', True, 'white')
         menu_rect = menu_text.get_rect()
@@ -77,6 +84,7 @@ class Renderer:
             win.blit(text2, (5, 30), text2_rect)
             win.blit(text3, (5, 55), text3_rect)
             win.blit(text4, (5, 80), text4_rect)
+            win.blit(text5, (5, 105), text5_rect)
 
     def scale(self, x:float, y:float, z:float, point:list):
         x = [point[0] * x, 0, 0]
@@ -200,6 +208,14 @@ class Renderer:
         else:
             self.alt_pressed = False
 
+        # Toggle wireframe
+        if (keys[pg.K_r]):
+            if not self.r_pressed:
+                self.wireframe = not self.wireframe
+            self.r_pressed = True
+        else:
+            self.r_pressed = False
+
         # Toggle menu
         if keys[pg.K_m]:
             if not self.m_pressed:
@@ -229,11 +245,16 @@ class Renderer:
     
     # Draws lines between two points
     def draw_lines(self, points):
-        for i in range(len(self.points)):
-            if 0 <= points[i][0] <= S_WIDTH and 0 <= points[i][1] <= S_HEIGHT and self.visible_verticies:
-                pg.draw.circle(win, 'white', points[i], 2 * self.zoom)
-        for i in self.lines:
-            pg.draw.line(win, pg.Color(255, 255, 255, a=122), points[i[0]], points[i[1]])
+        if self.wireframe:
+            for i in range(len(self.points)):
+                if 0 <= points[i][0] <= S_WIDTH and 0 <= points[i][1] <= S_HEIGHT and self.visible_verticies:
+                    pg.draw.circle(win, 'white', points[i], 2 * self.zoom)
+            
+            for i in self.lines:
+                pg.draw.line(win, pg.Color(255, 255, 255, a=122), points[i[0]], points[i[1]])
+        else:
+            for i in self.faces:
+                pg.draw.polygon(win, pg.Color(i.color), [points[x] for x in i.verts])
 
 # Object setup
 obj : list[Shape] = [CustomOBJ(0, 0, 0, 'objects/models/knight.obj', 400)]
